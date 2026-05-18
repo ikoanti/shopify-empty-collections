@@ -10,7 +10,7 @@
  *       with limit=1 — if products_count is 0 or the products array is
  *       empty the collection is considered "empty".
  *    3. Logs a summary table to the console.
- *    4. Auto-downloads a CSV: handle, title, url
+ *    4. Auto-downloads a CSV: url
  *
  *  Note: Shopify's storefront JSON API is public (no auth needed).
  *        Rate-limit: ~2 req/s is safe; the script throttles automatically.
@@ -100,10 +100,8 @@
 
   // ── Step 4: Export CSV ───────────────────────────────────────────────────
   const csvRows = [
-    ['handle', 'title', 'url'],
+    ['url'],
     ...emptyCollections.map(c => [
-      `"${c.handle}"`,
-      `"${c.title.replace(/"/g, '""')}"`,
       `"${c.url}"`,
     ]),
   ];
@@ -119,5 +117,5 @@
   document.body.removeChild(link);
 
   console.log(`\n💾 CSV downloaded: ${CSV_FILENAME}`);
-  console.log('   Columns: handle | title | url');
+  console.log('   Columns: url');
 })();
