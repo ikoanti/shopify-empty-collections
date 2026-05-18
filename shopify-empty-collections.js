@@ -61,6 +61,7 @@
   for (let i = 0; i < allCollections.length; i++) {
     const col = allCollections[i];
     const checkUrl = `${STORE_ORIGIN}/collections/${col.handle}/products.json?limit=1`;
+    const colUrl   = `${STORE_ORIGIN}/collections/${col.handle}`;
 
     try {
       const data     = await fetchJ(checkUrl);
@@ -71,17 +72,13 @@
         (typeof col.products_count === 'number' && col.products_count === 0);
 
       if (isEmpty) {
-        emptyCollections.push({
-          handle : col.handle,
-          title  : col.title,
-          url    : `${STORE_ORIGIN}/collections/${col.handle}`,
-        });
-        console.log(`  🚫 EMPTY → [${col.handle}] ${col.title}`);
+        emptyCollections.push(colUrl);
+        console.log(`  🚫 EMPTY → ${colUrl}`);
       } else {
-        console.log(`  ✅ OK    → [${col.handle}] ${col.title} (${products.length}+ products)`);
+        console.log(`  ✅ OK    → ${colUrl} (${products.length}+ products)`);
       }
     } catch (err) {
-      console.warn(`  ⚠️  Could not check [${col.handle}]: ${err.message}`);
+      console.warn(`  ⚠️  Could not check ${colUrl}: ${err.message}`);
     }
 
     await sleep(REQUEST_DELAY);
@@ -96,13 +93,13 @@
     return;
   }
 
-  console.table(emptyCollections);
+  console.log(emptyCollections.join('\n'));
 
   // ── Step 4: Export CSV ───────────────────────────────────────────────────
   const csvRows = [
     ['url'],
-    ...emptyCollections.map(c => [
-      `"${c.url}"`,
+    ...emptyCollections.map(url => [
+      `"${url}"`,
     ]),
   ];
 
